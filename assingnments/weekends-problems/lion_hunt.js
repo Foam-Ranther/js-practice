@@ -1,5 +1,28 @@
+function nextZebraDistace(startIndex, string, stringLength) {
+  for (let index = 1; index < stringLength; index++) {
+    if (string[startIndex + index] === "Z") {
+      return index -1; 
+    }
+  }
+  return -1;
+}
+
 function findClosestZebra(string) {
-  return 0;
+  const stringLength = string.length; 
+  
+  let shortestDistance = 0;
+
+  for (let index = 0; index < stringLength; index++) {
+    if (string[index] === "L") {
+      const distance = nextZebraDistace(index, string, stringLength);  
+
+      if(shortestDistance < distance) {
+        shortestDistance = distance;
+      }
+    }
+  }
+
+  return shortestDistance;
 }
 
 function composeMessage(string, closestDistance, expected) {
