@@ -1,6 +1,8 @@
-function nextZebraDistace(startIndex, string, stringLength) {
+function nextLetterDistance(startIndex, string, stringLength) {
+  let nextTarget = string[startIndex] === "L" ? "Z" : "L"
+
   for (let index = 1; index < stringLength; index++) {
-    if (string[startIndex + index] === "Z") {
+    if (string[startIndex + index] === nextTarget) {
       return index - 1; 
     }
   }
@@ -8,45 +10,27 @@ function nextZebraDistace(startIndex, string, stringLength) {
   if (string[stringLength - 1] === " ") {
     return ;
   }
-  return -1;
-}
-
-function nextLionDistace(startIndex, string, stringLength) {
-  for (let index = 1; index < stringLength; index++) {
-    if (string[startIndex + index] === "L") {
-      return index - 1; 
-    }
-  }
-  
-  if (string[stringLength - 1] === " ") {
-    return ;
-  }
 
   return -1;
 }
 
-function findClosestZebra(string) {
+function shouldDistaceBeUpdated(distance, shortestDistance) {
+  return shortestDistance > distance || shortestDistance === -1;
+}
+
+function distanceOfClosestZebra(string) {
   const stringLength = string.length; 
-  
+
   let shortestDistance = -1;
 
   for (let index = 0; index < stringLength - 1; index++) {
-    if (string[index] === "L") {
-      const distance = nextZebraDistace(index, string, stringLength);  
+    if (string[index] === "L" || string[index] === "Z") {
+      const distance = nextLetterDistance(index, string, stringLength);  
 
-      if(shortestDistance > distance || shortestDistance === -1) {
+      if(shouldDistaceBeUpdated(distance, shortestDistance)) {
         shortestDistance = distance;
       }
     }
-
-    if (string[index] === "Z") {
-      const distance = nextLionDistace(index, string, stringLength);  
-
-      if(shortestDistance > distance || shortestDistance === -1) {
-        shortestDistance = distance;
-      }
-    }
-
   }
 
   return shortestDistance;
@@ -62,7 +46,7 @@ function composeMessage(string, closestDistance, expected) {
 }
 
 function findClosestZebraTest(string, expected) {
-  const closestDistance = findClosestZebra(string);
+  const closestDistance = distanceOfClosestZebra(string);
   const message = composeMessage(string, closestDistance, expected);
   
   console.log(message);
@@ -83,6 +67,7 @@ function testAll() {
   findClosestZebraTest("", -1);
   findClosestZebraTest("Z  LZ ", 0);
   findClosestZebraTest("Z  LZ  ", 0);
+  findClosestZebraTest("Z  FL  Z  ", 2);
 }
 
 function main() {
