@@ -1,5 +1,55 @@
+function isVowel(char) {
+  const vowels = "aeiou";
+  for (let index = 0; index < 5; index++) {
+    if (char === vowels[index]) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+// function shouldBeChanged(char, previousChar) {
+//   const changedValue = isVowel(char) ? "C" : "V" 
+//   return (isVowel(char) &&  previousChar === changedValue); 
+// }
+
 function changeString(string) {
-  return "ape,p,l"
+  let tempString = "";
+  const stringLength = string.length;
+  let previousChar = ""
+
+  for (let index = 0; index < stringLength; index++) {
+    const isVowelValue = isVowel (string[index]);
+    if ((isVowelValue &&  previousChar === "C") || previousChar === "") {
+      tempString = tempString + string[index];
+      previousChar = isVowelValue ? "V" : "C";
+    } 
+    if (!(isVowelValue) &&  previousChar === "V" || previousChar === "") {
+      tempString = tempString + string[index];
+      previousChar = isVowelValue ? "V" : "C";
+    }
+    console.log(previousChar)
+  }
+
+  const tempStringLength = tempString.length;
+  
+  let stringIndex = 0;
+  let tempStringIndex = 0;
+
+  while (tempStringIndex < tempStringLength && stringIndex < stringLength ) {
+    if (string[stringIndex] !== tempString[tempStringIndex]) {
+      tempString = tempString + "," + string[stringIndex];
+      console.log("tempString : ", tempString);
+      stringIndex++;
+    } else {
+      stringIndex++;
+      tempStringIndex++;
+    }
+  }
+
+
+  return tempString;
 }
 
 function composeMessage(string, changedString, expected) {
@@ -21,6 +71,7 @@ function findClosestZebraTest(string, expected) {
 function testAll() {
   console.log("Alternating vowels and consonants :")
   findClosestZebraTest("apple", "ape,p,l");
+  findClosestZebraTest("there", "tere,h");
 }
 
 function main() {
