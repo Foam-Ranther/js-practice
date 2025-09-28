@@ -29,7 +29,6 @@ function changeString(string) {
       tempString = tempString + string[index];
       previousChar = isVowelValue ? "V" : "C";
     }
-    console.log(previousChar)
   }
 
   const tempStringLength = tempString.length;
@@ -73,6 +72,9 @@ function testAll() {
   changeStringTest("apple", "ape,p,l");
   changeStringTest("there", "tere,h");
   changeStringTest("applee", "ape,p,l,e");
+  changeStringTest("hello", "helo,l");
+  changeStringTest("abyss", "ab,y,s,s");
+  changeStringTest("this", "tis,h");
 }
 
 function main() {
