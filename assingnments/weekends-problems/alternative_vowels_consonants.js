@@ -37,7 +37,7 @@ function changeString(string) {
   let stringIndex = 0;
   let tempStringIndex = 0;
 
-  while (tempStringIndex < tempStringLength && stringIndex < stringLength ) {
+  while (tempStringIndex < tempStringLength || stringIndex < stringLength ) {
     if (string[stringIndex] !== tempString[tempStringIndex]) {
       tempString = tempString + "," + string[stringIndex];
       console.log("tempString : ", tempString);
@@ -61,7 +61,7 @@ function composeMessage(string, changedString, expected) {
   return symbol + inputSection + actualSection + expectedSection;
 }
 
-function findClosestZebraTest(string, expected) {
+function changeStringTest(string, expected) {
   const changedString = changeString(string);
   const message = composeMessage(string, changedString, expected);
   
@@ -70,8 +70,9 @@ function findClosestZebraTest(string, expected) {
 
 function testAll() {
   console.log("Alternating vowels and consonants :")
-  findClosestZebraTest("apple", "ape,p,l");
-  findClosestZebraTest("there", "tere,h");
+  changeStringTest("apple", "ape,p,l");
+  changeStringTest("there", "tere,h");
+  changeStringTest("applee", "ape,p,l,e");
 }
 
 function main() {
