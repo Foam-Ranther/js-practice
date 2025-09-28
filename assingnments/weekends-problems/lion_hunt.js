@@ -10,13 +10,13 @@ function nextZebraDistace(startIndex, string, stringLength) {
 function findClosestZebra(string) {
   const stringLength = string.length; 
   
-  let shortestDistance = 0;
+  let shortestDistance = -1;
 
   for (let index = 0; index < stringLength; index++) {
     if (string[index] === "L") {
       const distance = nextZebraDistace(index, string, stringLength);  
 
-      if(shortestDistance < distance) {
+      if(shortestDistance < distance || distance !== -1) {
         shortestDistance = distance;
       }
     }
@@ -45,6 +45,8 @@ function testAll() {
   console.log("Finding closest zebra")
   findClosestZebraTest("LZ", 0);
   findClosestZebraTest("L Z", 1);
+  findClosestZebraTest("L Z LZ", 0);
+  findClosestZebraTest("L  L", -1);
 }
 
 function main() {
