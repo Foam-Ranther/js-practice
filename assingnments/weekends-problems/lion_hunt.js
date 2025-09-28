@@ -1,7 +1,16 @@
 function nextZebraDistace(startIndex, string, stringLength) {
   for (let index = 1; index < stringLength; index++) {
     if (string[startIndex + index] === "Z") {
-      return index -1; 
+      return index - 1; 
+    }
+  }
+  return -1;
+}
+
+function nextLionDistace(startIndex, string, stringLength) {
+  for (let index = 1; index < stringLength; index++) {
+    if (string[startIndex + index] === "L") {
+      return index - 1; 
     }
   }
   return -1;
@@ -12,14 +21,27 @@ function findClosestZebra(string) {
   
   let shortestDistance = -1;
 
-  for (let index = 0; index < stringLength; index++) {
+  for (let index = 0; index < stringLength - 1; index++) {
     if (string[index] === "L") {
       const distance = nextZebraDistace(index, string, stringLength);  
 
-      if(shortestDistance < distance || distance !== -1) {
+      console.log("distance :",distance);
+
+      if(shortestDistance > distance || shortestDistance === -1) {
         shortestDistance = distance;
       }
     }
+
+    if (string[index] === "Z") {
+      const distance = nextLionDistace(index, string, stringLength);  
+
+      console.log("distance :",distance);
+
+      if(shortestDistance > distance || shortestDistance === -1) {
+        shortestDistance = distance;
+      }
+    }
+
   }
 
   return shortestDistance;
@@ -47,6 +69,7 @@ function testAll() {
   findClosestZebraTest("L Z", 1);
   findClosestZebraTest("L Z LZ", 0);
   findClosestZebraTest("L  L", -1);
+  findClosestZebraTest("ZL", 0);
 }
 
 function main() {
