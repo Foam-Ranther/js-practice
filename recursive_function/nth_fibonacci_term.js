@@ -1,5 +1,13 @@
 function nthFibonacciTerm(term) {
-  return 1;
+  if (term === 2) {
+    return 1;
+  }
+
+  if (term === 1) {
+    return 0;
+  }
+
+  return nthFibonacciTerm(term - 1) + nthFibonacciTerm(term - 2);
 }
 
 function composeMessage(term, actual, expected) {
@@ -21,6 +29,10 @@ function testNthFibonacciTerm(term, expected) {
 function testAllCases() {
   console.log("Nth fibonacci term");
   testNthFibonacciTerm(2, 1);
+  testNthFibonacciTerm(3, 1);
+  testNthFibonacciTerm(4, 2);
+  testNthFibonacciTerm(5, 3);
+  testNthFibonacciTerm(6, 5);
 }
 
 function main() {
