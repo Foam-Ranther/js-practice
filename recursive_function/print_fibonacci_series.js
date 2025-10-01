@@ -1,5 +1,14 @@
 function printFibonacciSeries(term) {
-  return "0";
+  const index = 1;
+  return fibonacciSeriesLoop(term, index);
+}
+
+function fibonacciSeriesLoop(term, index) {
+  if (index > term) {
+    return "";
+  }
+
+  return nthFibonacciTerm(index) + " " + fibonacciSeriesLoop(term, index + 1);
 }
 
 function nthFibonacciTerm(term) {
@@ -32,7 +41,9 @@ function testPrintFibonacciSeries(term, expected) {
 
 function testAllCases() {
   console.log("fibonacci series : ");
-  testPrintFibonacciSeries(1, "0");
+  testPrintFibonacciSeries(1, "0 ");
+  testPrintFibonacciSeries(3, "0 1 1 ");
+  testPrintFibonacciSeries(9, "0 1 1 2 3 5 8 13 21 ");
 }
 
 function main() {
