@@ -1,21 +1,24 @@
-function findVowelsIsland(string) {
+function countVowelsIsland(string) {
   const count = 0;
   const index = 0;
   const editedString = string + " ";
 
-  return loopString(editedString, index, count);
+  return countVowelsIslandLoop(editedString, index, count);
 }
 
-function loopString(string, index, count) {
+function countVowelsIslandLoop(string, index, count) {
+  const isPreviousVowel = isVowel(string[index - 1], 0); 
+  const isCurrentConsonant = !isVowel(string[index], 0);
+
   if (index === string.length) {
     return count;
   }
 
-  if (isVowel(string[index - 1], 0) && !isVowel(string[index], 0)) {
+  if (isPreviousVowel && isCurrentConsonant) {
     count++;
   }
 
-  return loopString(string, index + 1, count);
+  return countVowelsIslandLoop(string, index + 1, count);
 }
 
 function isVowel(char, index) {
@@ -41,8 +44,8 @@ function composeMessage(string, actual, expected) {
   return symbol + inputSection + actualSection + expectedSection;
 }
 
-function testFindVowelsIsland(string, expected) {
-  const actual = findVowelsIsland(string);
+function testCountVowelsIsland(string, expected) {
+  const actual = countVowelsIsland(string);
   const message = composeMessage(string, actual, expected);
   
   console.log(message);
@@ -50,13 +53,13 @@ function testFindVowelsIsland(string, expected) {
 
 function testAllCases() {
   console.log("Find Vowels Island : ");
-  testFindVowelsIsland("hello world", 3);
-  testFindVowelsIsland("aeiou", 1);
-  testFindVowelsIsland("fool", 1);
-  testFindVowelsIsland("eating", 2);
-  testFindVowelsIsland(" ", 0);
-  testFindVowelsIsland("", 0);
-  testFindVowelsIsland("123ei", 1);
+  testCountVowelsIsland("hello world", 3);
+  testCountVowelsIsland("aeiou", 1);
+  testCountVowelsIsland("fool", 1);
+  testCountVowelsIsland("eating", 2);
+  testCountVowelsIsland(" ", 0);
+  testCountVowelsIsland("", 0);
+  testCountVowelsIsland("123ei", 1);
 }
 
 function main() {
