@@ -1,48 +1,56 @@
 function countSandwich(string) {
   let count = 0;
   let index = 0;
-  let lastIndex = index;
+  let previousBIndex = index;
+
   while (index <= string.length) {
     if (string[index] === "B") {
-      lastIndex = index;
-
-      while (string[index] !== "M" && index <= string.length) {
-        index++;
-      }
-
-      while (index <= string.length) {
-
-        if (string[index] === "B") {
-          count++;
-        }
-
-        index++;
-      }
-
-      index = lastIndex;
+      previousBIndex = index;
+      index = indexAfterM(string, index);
+      count = countBAfterM(string, index, count);
+      index = previousBIndex;
     }
 
     index++;
   }
   return count;
 }
-// BBBMBMB;
+
+function indexAfterM(string, index) {
+  while (string[index] !== "M" && index <= string.length) {
+    index++;
+  }
+
+  return index + 1;
+}
+
+function countBAfterM(string, index, count) {
+  while (index <= string.length) {
+    if(string[index] === "B") {
+      count++;
+    }
+
+    index++;
+  }
+  return count; 
+}
+
 function realCountSandwich(string, index, subIndex, count, isMeatBtw) {
 
   if (index >= string.length) {
     return count;
   }
 
-  if (string[index + subIndex] === "B" ) {
+  if (string[index + subIndex] === "B") {
 
     if (isMeatBtw) {
       count = count + 1;
     }
-    
+
     return realCountSandwich(string, index, subIndex + 1, count, isMeatBtw);
   }
-  
-  if (string [index + subIndex] === "M") {
+
+  if (string[index + subIndex] === "M") {
     isMeatBtw = true;
     return realCountSandwich(string, index, subIndex + 1, count, isMeatBtw);
   }
@@ -56,15 +64,15 @@ function composeMessage(string, actual, expected) {
   const expectedSection = `| expected : [${expected}]`;
   const inputSection = `[${string}]`;
 
-  return symbol + inputSection + actualSection + expectedSection;                     
+  return symbol + inputSection + actualSection + expectedSection;
 
 }
 
 function testSandwichCount(string, expected) {
   const actual = countSandwich(string);
   const message = composeMessage(string, actual, expected);
-  
-  console.log(message); 
+
+  console.log(message);
 }
 
 function testAllCases() {
