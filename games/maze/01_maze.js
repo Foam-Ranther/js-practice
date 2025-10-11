@@ -8,10 +8,10 @@ function printMaze(maze, y, x) {
 }
 
 function validate(instruction) {
-  const instructionString = ["a", "d", "w", "s", "quit"];
+  const instructions = ["a", "d", "w", "s", "quit"];
   const loweCaseInstruction = instruction.toLowerCase()
 
-  if (instructionString.includes(loweCaseInstruction)) {
+  if (instructions.includes(loweCaseInstruction)) {
     return loweCaseInstruction;
   }
 
@@ -42,6 +42,13 @@ function getInstruction() {
 
 }
 
+function isBoundary(playerCoordinate, maze) {
+  let y = playerCoordinate[0];
+  let x = playerCoordinate[1];
+
+  return maze[y][x] === "#"
+}
+
 function play(maze, playerCoordinate) {
   let instruction = "";
   let y = playerCoordinate[0];
@@ -51,6 +58,10 @@ function play(maze, playerCoordinate) {
     printMaze(maze, y, x, instruction);
     instruction = getInstruction();
     playerCoordinate = move(instruction, y, x);
+    if (isBoundary(playerCoordinate, maze)) {
+      console.log("\n There is the boundary there you can't move there ❌");
+      continue;
+    }
     maze[y][x] = " ";
     y = playerCoordinate[0];
     x = playerCoordinate[1];
