@@ -7,7 +7,8 @@ function convertArrayToString(array) {
   const tempArray = []
   for (let index = 0; index < array.length; index++) {
     let columnString =array[index].join("|"); 
-    tempArray.push(pad(5, columnString, " ")); 
+    columnString = pad(5, columnString, " "); 
+    tempArray.push(columnString); 
   }
   
   return tempArray.join("\n     ----|----|----\n"); 
@@ -16,16 +17,19 @@ function convertArrayToString(array) {
 function displayArray(array) {
   const convertedString = convertArrayToString(array); 
   // console.log(convertedString); 
-  const paddedString =  pad(5, convertedString, "\n");
+  const paddedString =  pad(2, convertedString, "\n");
   console.log(paddedString);  
   console.log("\n \n")
 }
 
 
 
-function isWinningCombination(array, string, char) {
-  for(let index = 0; index < string.length; index++) {
-    if (array[string[index]] !== char) {
+function isWinningCombination(array, winCombination, char) {
+  for(let index = 0; index < winCombination.length; index++) {
+    const currentElement = winCombination[index];
+    const xCoor = currentElement[1]; 
+    const yCoor = currentElement[0];
+    if (array[yCoor][xCoor] !== char) {
       return false; 
     }
   }
@@ -35,36 +39,55 @@ function isWinningCombination(array, string, char) {
 
 function isPlayerWinner(array, char) { 
   let isWinner = false; 
-  const winCombination = ["012", "345", "678", "036", "147", "258", "048", "246"]; 
+  const winCombination = [
+    ["00", "01", "02"],
+    ["10", "11", "12"],
+    ["20", "21", "22"],
+    ["00", "10", "20"],
+    ["01", "11", "21"],
+    ["02", "12", "22"],
+    ["00", "11", "22"],
+    ["02", "11", "20"],
+  ];
 
   for (let index = 0; index < winCombination.length; index++) {
     isWinner = isWinningCombination(array, winCombination[index], char);
     if (isWinner) {
-      return isWinner; 
+      return true; 
     } 
   }
 
-  return isWinner; 
+  return false; 
 }
 
 function testDisplayArray() {
   const array = [
-    [" ❌ ", " ❌ ", " ❌ "], 
-    [" ❌ ", " ❌ ", " ❌ "], 
-    [" 🟢 ", " 🟢 ", " 🟢 "], 
+    [" 1  ", " 2  ", " 3 "], 
+    [" 4  ", " 5  ", " 6 "], 
+    [" 7  ", " 8  ", " 9 "], 
   ]; 
   
   displayArray(array); 
 }
 
+function getCoordinate(string) {
+  const coordinates = ["00", "01", "02", "10", "11", "12", "20", "21", "22"]; 
+  const index = parseInt(string); 
+  return coordinates[index]; 
+}
+
+function play(array) {
+
+}
+
 function main() {
   const array = [
-    ["0", "1", "2"], 
-    ["3", "4", "5"], 
-    ["6", "7", "8"], 
+    [" ", " ", " "], 
+    ["*", "*", "*"], 
+    ["*", " ", " "], 
   ]; 
   // displayArray(array);
-  // console.log(isPlayerWinner(array, "*")); 
+  console.log(isPlayerWinner(array, "*")); 
   testDisplayArray(); 
 }
 main(); 
