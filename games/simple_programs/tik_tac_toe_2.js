@@ -23,8 +23,8 @@ function displayArray(array) {
 }
 
 function display(array) {
-  console.clear(); 
-  displayArray(array); 
+  console.clear();
+  displayArray(array);
 }
 
 function isWinningCombination(array, winCombination, char) {
@@ -64,61 +64,84 @@ function isPlayerWinner(array, char) {
   return false;
 }
 
+
+function updateArray(coordinates, array, char) {
+  const yCoor = parseInt(coordinates[0]);
+  const xCoor = parseInt(coordinates[1]);
+  array[yCoor][xCoor] = char;
+}
+
+function isValidInput(playerInput) {
+  return playerInput > 0 && playerInput < 10;
+}
+
+function getInput(playerName) {
+  console.log("Enter the block number in order to chose the block");
+
+  let playerInput = prompt(`Enter your choice ${playerName} : `);
+  playerInput = parseInt(playerInput);
+
+  if (isValidInput(playerInput)) {
+    return playerInput;
+  }
+
+  console.log("❌ Invalid user Input, Try again \n");
+  return getInput(playerName);
+}
+
 function getCoordinate(chosenBox) {
   const coordinates = ["00", "01", "02", "10", "11", "12", "20", "21", "22"];
   return coordinates[chosenBox - 1];
 }
 
-function updateArray(coordinates, array, char) {
-  const yCoor = parseInt(coordinates[0]);
-  const xCoor = parseInt(coordinates[1]);
-  array[yCoor][xCoor] = char; 
+function isBlockEmpty(array, playerChosenCoordinate) {
+  const yCoor = parseInt(playerChosenCoordinate[0]);
+  const xCoor = parseInt(playerChosenCoordinate[1]);
+
+  return array[yCoor][xCoor] !== " ❌ " && array[yCoor][xCoor] !== " 🟢 ";
 }
 
-function validate(playerInput) {
-  return playerInput > 0 && playerInput < 10; 
-}
-
-function getInput(number) {
-  console.log("Enter the block number in order to chose the block")
-  let playerInput = prompt(`Enter your choice player ${number} : `);
-  playerInput = parseInt(playerInput); 
-
-  if(validate(playerInput)) {
-    return playerInput;
+function getChosenBlockPosition(playerName, array) {
+  const playerChoice = getInput(playerName);
+  const playerChosenCoordinate = getCoordinate(playerChoice);
+  
+  if (isBlockEmpty(array, playerChosenCoordinate)) {
+    return playerChosenCoordinate
   }
 
-  console.log("❌ Invalid user Input, Try again \n"); 
-  return getInput(); 
+  console.log("Position has already been occupied"); 
+  getChosenBlockPosition(playerName, array); 
 }
+
 
 function startGame(array, p1Name, p2Name) {
-  let turns = 9; 
-  let currentTurn = 0; 
-  display(array); 
+  let turns = 9;
+  let currentTurn = 0;
+  display(array);
 
-  while(currentTurn < turns) {
-    const player1Choice = getInput(1); 
-    const p1ChosenCoordinate = getCoordinate(player1Choice);
+  while (currentTurn < turns) {
+    const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array); 
     updateArray(p1ChosenCoordinate, array, " ❌ ");
     display(array);
+
     if (isPlayerWinner(array, " ❌ ")) {
-      console.log("player 1 won the game");
-      return 
+      console.log(`${p1Name} won the game 🎉🎉`);
+      return
     }
 
-    const player2Choice = getInput(2); 
-    const p2ChosenCoordinate = getCoordinate(player2Choice);
+    const p2ChosenCoordinate = getChosenBlockPosition(p2Name, array);
     updateArray(p2ChosenCoordinate, array, " 🟢 ");
-    display(array); 
+    display(array);
+
     if (isPlayerWinner(array, " 🟢 ")) {
-      console.log("player 2 won the game");
-      return;  
+      console.log(`${p2Name} won the game 🎉🎉`);
+      return;
     }
-    currentTurn = currentTurn + 2; 
+
+    currentTurn = currentTurn + 2;
   }
 
-  console.log("It was draw."); 
+  console.log("It was draw.");
 }
 
 function config() {
@@ -127,20 +150,21 @@ function config() {
     [" 4  ", " 5  ", " 6 "],
     [" 7  ", " 8  ", " 9 "],
   ];
-  const p1Name = prompt("Enter your name (p1) : "); 
+  const p1Name = prompt("Enter your name (p1) : ");
   const p2Name = prompt("Enter your name (p2) : ")
 
-  console.log(`${p1Name} marker : `)
+  console.log(`${p1Name} marker : " ❌ "`);
+  console.log(`${p1Name} marker : " 🟢 "`);
 
-  startGame(array, p1Name, p2Name); 
+  startGame(array, p1Name, p2Name);
 
-  if(confirm("Do you wanna play again ? ")) {
-    config();  
+  if (confirm("Do you wanna play again ? ")) {
+    config();
   }
 }
 
 function main() {
- config(); 
+  config();
 }
 
 main(); 
