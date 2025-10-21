@@ -24,7 +24,7 @@ function displayArray(array) {
 
 function display(array) {
   console.clear(); 
-  console.log()
+  displayArray(array); 
 }
 
 function isWinningCombination(array, winCombination, char) {
@@ -69,62 +69,74 @@ function getCoordinate(string) {
   return coordinates[index];
 }
 
-function updateArray(coordinates, array,) {
+function updateArray(coordinates, array, char) {
   const yCoor = parseInt(coordinates[0]);
   const xCoor = parseInt(coordinates[1]);
-  array[yCoor][xCoor] = " ❌ ";
+  array[yCoor][xCoor] = char; 
 }
 
 function validate(playerInput) {
-  return playerInput !== 
+  return playerInput > 0 && playerInput < 10; 
 }
 
-function getInput() {
+function getInput(number) {
   console.log("Enter the block number in order to chose the block")
-  const playerInput = prompt("Enter your choice p1 : ");
+  let playerInput = prompt(`Enter your choice player ${number} : `);
+  playerInput = parseInt(playerInput); 
 
   if(validate(playerInput)) {
     return playerInput;
   }
 
-  console.log("Put valid choice from 1 to 9 \n")
+  console.log("❌ Invalid user Input, Try again \n"); 
   return getInput(); 
 }
 
-function play(array) {
-  displayArray(array); 
+function startGame(array) {
+  let turns = 9; 
+  let currentTurn = 0; 
+  display(array); 
 
-  const p1ChosenCoordinate = getCoordinate(player1Choice);
-  console.log("player1Choice", player1Choice); 
-  updateArray(p1ChosenCoordinate, array);
-  displayArray(array);
+  while(currentTurn < turns) {
+    const player1Choice = getInput(1); 
+    const p1ChosenCoordinate = getCoordinate(player1Choice);
+    updateArray(p1ChosenCoordinate, array, " ❌ ");
+    display(array);
+    if (isPlayerWinner(array, " ❌ ")) {
+      console.log("player 1 won the game");
+      return 
+    }
 
-  // const player2Choice = prompt("Enter your choice p2 : "); 
-
+    const player2Choice = getInput(2); 
+    const p2ChosenCoordinate = getCoordinate(player2Choice);
+    updateArray(p2ChosenCoordinate, array, " 🟢 ");
+    display(array); 
+    if (isPlayerWinner(array, " 🟢 ")) {
+      console.log("player 2 won the game");
+      return;  
+    }
+    currentTurn = currentTurn + 2; 
+  }
+  
+  console.log("It was draw."); 
 }
 
-
-function testDisplayArray() {
+function config() {
   const array = [
-    [" ❌ ", " 2  ", " 3 "],
+    [" 1  ", " 2  ", " 3 "],
     [" 4  ", " 5  ", " 6 "],
     [" 7  ", " 8  ", " 9 "],
   ];
 
-  // displayArray(array); 
-}
+  startGame(array); 
 
+  if(confirm("Do you wanna play again ? ")) {
+    config();  
+  }
+}
 
 function main() {
-  const array = [
-    [" ❌ ", " 2  ", " 3 "],
-    [" 4  ", " 5  ", " 6 "],
-    [" 7  ", " 8  ", " 9 "],
-  ];
-  // displayArray(array);
-  // console.log(isPlayerWinner(array, "*"));
-  // testDisplayArray();]
-
-  play(array); 
+ config(); 
 }
+
 main(); 
