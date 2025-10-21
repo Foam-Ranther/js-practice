@@ -25,6 +25,7 @@ function displayArray(array) {
 function display(array) {
   console.clear();
   displayArray(array);
+  console.log("\n------------------------------------------\n")
 }
 
 function isWinningCombination(array, winCombination, char) {
@@ -104,41 +105,50 @@ function isBlockEmpty(array, playerChosenCoordinate) {
 function getChosenBlockPosition(playerName, array) {
   const playerChoice = getInput(playerName);
   const playerChosenCoordinate = getCoordinate(playerChoice);
-  
+
   if (isBlockEmpty(array, playerChosenCoordinate)) {
-    return playerChosenCoordinate
+    return playerChosenCoordinate;
   }
 
-  console.log("Position has already been occupied"); 
-  getChosenBlockPosition(playerName, array); 
+  console.log("Position has already been occupied \n");
+  return getChosenBlockPosition(playerName, array);
+}
+
+function playChance(playerName, array) {
+
 }
 
 
 function startGame(array, p1Name, p2Name) {
-  let turns = 9;
-  let currentTurn = 0;
+  let turns = 8;
+  let currentTurn = 1;
   display(array);
 
-  while (currentTurn < turns) {
-    const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array); 
-    updateArray(p1ChosenCoordinate, array, " ❌ ");
-    display(array);
+  const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
+  updateArray(p1ChosenCoordinate, array, " ❌ ");
+  display(array);
 
-    if (isPlayerWinner(array, " ❌ ")) {
-      console.log(`${p1Name} won the game 🎉🎉`);
-      return
-    }
-
+  while (currentTurn <= turns) {
     const p2ChosenCoordinate = getChosenBlockPosition(p2Name, array);
     updateArray(p2ChosenCoordinate, array, " 🟢 ");
     display(array);
 
     if (isPlayerWinner(array, " 🟢 ")) {
-      console.log(`${p2Name} won the game 🎉🎉`);
+      console.log(`${p2Name} won the game 🎉🎉 \n`);
       return;
     }
 
-    currentTurn = currentTurn + 2;
+    const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
+    updateArray(p1ChosenCoordinate, array, " ❌ ");
+    display(array);
+
+    if (isPlayerWinner(array, " ❌ ")) {
+      console.log(`${p1Name} won the game 🎉🎉 \n`);
+      return
+    }
+
+    currentTurn += 2;
+    console.log(currentTurn); 
   }
 
   console.log("It was draw.");
