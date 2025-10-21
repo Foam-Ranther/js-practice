@@ -4,7 +4,8 @@ function pad(count, string, char) {
 }
 
 function convertArrayToString(array) {
-  const tempArray = []
+  const tempArray = [];
+
   for (let index = 0; index < array.length; index++) {
     let columnString = array[index].join("|");
     columnString = pad(5, columnString, " ");
@@ -16,7 +17,6 @@ function convertArrayToString(array) {
 
 function displayArray(array) {
   const convertedString = convertArrayToString(array);
-  // console.log(convertedString); 
   const paddedString = pad(2, convertedString, "\n");
   console.log(paddedString);
   console.log("\n \n")
@@ -32,6 +32,7 @@ function isWinningCombination(array, winCombination, char) {
     const currentElement = winCombination[index];
     const xCoor = currentElement[1];
     const yCoor = currentElement[0];
+
     if (array[yCoor][xCoor] !== char) {
       return false;
     }
@@ -63,10 +64,9 @@ function isPlayerWinner(array, char) {
   return false;
 }
 
-function getCoordinate(string) {
+function getCoordinate(chosenBox) {
   const coordinates = ["00", "01", "02", "10", "11", "12", "20", "21", "22"];
-  const index = parseInt(string) - 1;
-  return coordinates[index];
+  return coordinates[chosenBox - 1];
 }
 
 function updateArray(coordinates, array, char) {
@@ -92,7 +92,7 @@ function getInput(number) {
   return getInput(); 
 }
 
-function startGame(array) {
+function startGame(array, p1Name, p2Name) {
   let turns = 9; 
   let currentTurn = 0; 
   display(array); 
@@ -117,7 +117,7 @@ function startGame(array) {
     }
     currentTurn = currentTurn + 2; 
   }
-  
+
   console.log("It was draw."); 
 }
 
@@ -127,8 +127,12 @@ function config() {
     [" 4  ", " 5  ", " 6 "],
     [" 7  ", " 8  ", " 9 "],
   ];
+  const p1Name = prompt("Enter your name (p1) : "); 
+  const p2Name = prompt("Enter your name (p2) : ")
 
-  startGame(array); 
+  console.log(`${p1Name} marker : `)
+
+  startGame(array, p1Name, p2Name); 
 
   if(confirm("Do you wanna play again ? ")) {
     config();  
