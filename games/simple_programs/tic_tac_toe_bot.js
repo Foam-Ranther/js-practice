@@ -1,3 +1,15 @@
+const WIN_COMBINATIONS = [
+  ["00", "01", "02"],
+  ["10", "11", "12"],
+  ["20", "21", "22"],
+  ["00", "10", "20"],
+  ["01", "11", "21"],
+  ["02", "12", "22"],
+  ["00", "11", "22"],
+  ["02", "11", "20"],
+];
+
+
 function pad(count, string, char) {
   let paddedString = string.padStart(string.length + count, char);
   return paddedString;
@@ -43,19 +55,8 @@ function isWinningCombination(array, winCombination, char) {
 
 function isPlayerWinner(array, char) {
   let isWinner = false;
-  const winCombination = [
-    ["00", "01", "02"],
-    ["10", "11", "12"],
-    ["20", "21", "22"],
-    ["00", "10", "20"],
-    ["01", "11", "21"],
-    ["02", "12", "22"],
-    ["00", "11", "22"],
-    ["02", "11", "20"],
-  ];
-
-  for (let index = 0; index < winCombination.length; index++) {
-    isWinner = isWinningCombination(array, winCombination[index], char);
+  for (let index = 0; index < WIN_COMBINATIONS.length; index++) {
+    isWinner = isWinningCombination(array, WIN_COMBINATIONS[index], char);
     if (isWinner) {
       return true;
     }
@@ -113,22 +114,77 @@ function getChosenBlockPosition(playerName, array) {
 }
 
 function removeChosenPosition(positions, randomIndex) {
-  positions[randomIndex] = positions[positions.length - 1]; 
-  positions.pop(); 
+  positions[randomIndex] = positions[positions.length - 1];
+  positions.pop();
 }
 
 function getRandomPosition(positions, array) {
   const randomIndex = Math.floor(positions.length * Math.random());
-  const randomPosition = positions[randomIndex]; 
-  const randomChoiceCoordinate = getCoordinate(randomPosition); 
+  const randomPosition = positions[randomIndex];
+  const randomChoiceCoordinate = getCoordinate(randomPosition);
 
   if (isBlockEmpty(array, randomChoiceCoordinate)) {
-    removeChosenPosition(positions, randomIndex); 
-    return randomChoiceCoordinate; 
+    removeChosenPosition(positions, randomIndex);
+    return randomChoiceCoordinate;
   }
 
-  removeChosenPosition(positions, randomIndex); 
-  return getRandomPosition(positions, array); 
+  removeChosenPosition(positions, randomIndex);
+  return getRandomPosition(positions, array);
+}
+
+function isPlayerChar(coordinate, array, char) {
+  const [y, x] = coordinate;
+  return array[y][x] === char;
+}
+
+function playerNextWinningcoordinate(array) {
+  let nextWinningMove = [];
+
+  for (let row = 0; row < WIN_COMBINATIONS.length; row++) {
+    let countOfPlayerChar = 0;
+    const currentRow = WIN_COMBINATIONS[row];
+
+    for (let column = 0; column < currentRow.length; column++) {
+      const coordinate = currentRow[column];
+      if (isPlayerChar(coordinate, array, " ❌ ")) {
+        countOfPlayerChar++;
+      } else {
+        nextWinningMove.push(coordinate);
+      }
+    }
+
+    if (countOfPlayerChar >= 2 && isBlockEmpty(array, nextWinningMove[0])) {
+      return nextWinningMove[0];
+    }
+
+    nextWinningMove = [];
+  }
+
+  return "none";
+}
+
+
+function defenseBotCoordinate(positions, array) {
+  const defenseMove = playerNextWinningcoordinate(array); 
+  console.log("---> defense move : ", defenseMove); 
+  
+  if (defenseMove === "none") {
+    return getRandomPosition(positions, array); 
+  }
+
+  return defenseMove; 
+  // const strategy = ["11", ""]
+  // const pWC = positions[randomIndex];
+  // const randomChoiceCoordinate = getCoordinate(randomPosition);
+
+  // if (isBlockEmpty(array, randomChoiceCoordinate)) {
+  //   removeChosenPosition(positions, randomIndex);
+  //   return randomChoiceCoordinate;
+  // }
+
+  // removeChosenPosition(positions, randomIndex);
+  // return getRandomPosition(positions, array);
+
 }
 
 function startGame(array, p1Name, p2Name) {
@@ -136,13 +192,14 @@ function startGame(array, p1Name, p2Name) {
   let turns = 8;
   let currentTurn = 1;
   display(array);
-  
-  const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
+
+  let p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
   updateArray(p1ChosenCoordinate, array, " ❌ ");
   display(array);
 
   while (currentTurn <= turns) {
-    const p2ChosenCoordinate = getRandomPosition(positions, array);
+    const p2ChosenCoordinate = defenseBotCoordinate(positions, array);
+    console.log("bot chosen coordinate", p2ChosenCoordinate);
     updateArray(p2ChosenCoordinate, array, " 🟢 ");
     display(array);
 
@@ -151,7 +208,7 @@ function startGame(array, p1Name, p2Name) {
       return;
     }
 
-    const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
+    p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
     updateArray(p1ChosenCoordinate, array, " ❌ ");
     display(array);
 
@@ -188,6 +245,12 @@ function config() {
 }
 
 function main() {
+  const array = [
+    [" ❌ ", " 2  ", " 3 "],
+    [" 4  ", " ❌ ", " 6 "],
+    [" 7  ", " 8  ", " 9 "],
+  ];
+  // console.log(playerNextWinningMove(array));
   config();
 }
 
