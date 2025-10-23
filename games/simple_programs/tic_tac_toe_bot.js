@@ -23,7 +23,6 @@ function displayArray(array) {
 }
 
 function display(array) {
-  console.clear();
   displayArray(array);
   console.log("\n------------------------------------------\n")
 }
@@ -91,7 +90,7 @@ function getInput(playerName) {
 
 function getCoordinate(chosenBox) {
   const coordinates = ["00", "01", "02", "10", "11", "12", "20", "21", "22"];
-  return coordinates[chosenBox - 1];
+  return coordinates[chosenBox];
 }
 
 function isBlockEmpty(array, playerChosenCoordinate) {
@@ -103,7 +102,7 @@ function isBlockEmpty(array, playerChosenCoordinate) {
 
 function getChosenBlockPosition(playerName, array) {
   const playerChoice = getInput(playerName);
-  const playerChosenCoordinate = getCoordinate(playerChoice);
+  const playerChosenCoordinate = getCoordinate(playerChoice - 1);
 
   if (isBlockEmpty(array, playerChosenCoordinate)) {
     return playerChosenCoordinate;
@@ -113,20 +112,37 @@ function getChosenBlockPosition(playerName, array) {
   return getChosenBlockPosition(playerName, array);
 }
 
-function getRandomBotPosition(positions) {
-  console.log(positions); 
+function removeChosenPosition(positions, randomIndex) {
+  positions[randomIndex] = positions[positions.length - 1]; 
+  positions.pop(); 
+}
+
+function getRandomPosition(positions, array) {
+  const randomIndex = Math.floor(positions.length * Math.random());
+  const randomPosition = positions[randomIndex]; 
+  const randomChoiceCoordinate = getCoordinate(randomPosition); 
+
+  if (isBlockEmpty(array, randomChoiceCoordinate)) {
+    removeChosenPosition(positions, randomIndex); 
+    return randomChoiceCoordinate; 
+  }
+
+  removeChosenPosition(positions, randomIndex); 
+  return getRandomPosition(positions, array); 
 }
 
 function startGame(array, p1Name, p2Name) {
+  const positions = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   let turns = 8;
   let currentTurn = 1;
   display(array);
+  
   const p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
   updateArray(p1ChosenCoordinate, array, " ❌ ");
   display(array);
 
   while (currentTurn <= turns) {
-    const p2ChosenCoordinate = getChosenBlockPosition(p2Name, array);
+    const p2ChosenCoordinate = getRandomPosition(positions, array);
     updateArray(p2ChosenCoordinate, array, " 🟢 ");
     display(array);
 
@@ -160,21 +176,19 @@ function config() {
   const p2Name = prompt("Enter your name (p2) : ")
 
   console.log(`${p1Name} marker : " ❌ "`);
-  console.log(`${p1Name} marker : " 🟢 "`);
+  console.log(`${p2Name} marker : " 🟢 "`);
 
   startGame(array, p1Name, p2Name);
 
   const wannaPlayAgain = confirm("Do you wanna play again ? ");
   if (wannaPlayAgain) {
     config();
-    console.log("Thanks for playing :)");
   }
+  console.log("Thanks for playing :)");
 }
 
 function main() {
-  const positions = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  getRandomBotPosition(positions); 
-  // config();
+  config();
 }
 
 main(); 
