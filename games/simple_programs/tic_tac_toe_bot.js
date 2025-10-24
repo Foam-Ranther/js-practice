@@ -8,7 +8,7 @@ const WIN_COMBINATIONS = [
   ["00", "11", "22"],
   ["02", "11", "20"],
 ];
-
+const EMPTY_POSITIONS = [0, 1, 2, 3, 4, 5, 6, 7, 8];
 
 function pad(count, string, char) {
   let paddedString = string.padStart(string.length + count, char);
@@ -94,7 +94,7 @@ function getCoordinate(chosenBox) {
   return coordinates[chosenBox];
 }
 
-function isBlockEmpty(array, playerChosenCoordinate) {
+function checkIsBlockEmpty(array, playerChosenCoordinate) {
   const yCoor = parseInt(playerChosenCoordinate[0]);
   const xCoor = parseInt(playerChosenCoordinate[1]);
 
@@ -105,7 +105,7 @@ function getChosenBlockPosition(playerName, array) {
   const playerChoice = getInput(playerName);
   const playerChosenCoordinate = getCoordinate(playerChoice - 1);
 
-  if (isBlockEmpty(array, playerChosenCoordinate)) {
+  if (checkIsBlockEmpty(array, playerChosenCoordinate)) {
     return playerChosenCoordinate;
   }
 
@@ -113,23 +113,22 @@ function getChosenBlockPosition(playerName, array) {
   return getChosenBlockPosition(playerName, array);
 }
 
-function removeChosenPosition(positions, randomIndex) {
-  positions[randomIndex] = positions[positions.length - 1];
-  positions.pop();
+function removeBlockPosition(randomIndex) {
+  EMPTY_POSITIONS[randomIndex] = EMPTY_POSITIONS[EMPTY_POSITIONS.length - 1];
+  EMPTY_POSITIONS.pop();
 }
 
-function getRandomPosition(positions, array) {
-  const randomIndex = Math.floor(positions.length * Math.random());
-  const randomPosition = positions[randomIndex];
+function getRandomPosition(array) {
+  const randomIndex = Math.floor(EMPTY_POSITIONS.length * Math.random());
+  const randomPosition = EMPTY_POSITIONS[randomIndex];
   const randomChoiceCoordinate = getCoordinate(randomPosition);
+  removeBlockPosition(randomIndex);
 
-  if (isBlockEmpty(array, randomChoiceCoordinate)) {
-    removeChosenPosition(positions, randomIndex);
+  if (checkIsBlockEmpty(array, randomChoiceCoordinate)) {
     return randomChoiceCoordinate;
   }
 
-  removeChosenPosition(positions, randomIndex);
-  return getRandomPosition(positions, array);
+  return getRandomPosition(array);
 }
 
 function isPlayerChar(coordinate, array, char) {
@@ -137,7 +136,7 @@ function isPlayerChar(coordinate, array, char) {
   return array[y][x] === char;
 }
 
-function playerNextWinningcoordinate(array) {
+function playerNextWinningcoordinate(array, char) {
   let nextWinningMove = [];
 
   for (let row = 0; row < WIN_COMBINATIONS.length; row++) {
@@ -146,73 +145,141 @@ function playerNextWinningcoordinate(array) {
 
     for (let column = 0; column < currentRow.length; column++) {
       const coordinate = currentRow[column];
-      if (isPlayerChar(coordinate, array, " ❌ ")) {
+      const isChar = isPlayerChar(coordinate, array, char);
+
+      if (isChar) {
         countOfPlayerChar++;
       } else {
         nextWinningMove.push(coordinate);
       }
     }
 
-    if (countOfPlayerChar >= 2 && isBlockEmpty(array, nextWinningMove[0])) {
+    if (countOfPlayerChar >= 2 && checkIsBlockEmpty(array, nextWinningMove[0])) {
       return nextWinningMove[0];
     }
 
     nextWinningMove = [];
   }
 
-  return "none";
+  return -1;
 }
 
-
-function defenseBotCoordinate(positions, array) {
-  const defenseMove = playerNextWinningcoordinate(array); 
-  console.log("---> defense move : ", defenseMove); 
-  
-  if (defenseMove === "none") {
-    return getRandomPosition(positions, array); 
+function getBestStrategicPostion(array) {
+  const priorityList = ["11"];
+  for (let index = 0; index < priorityList.length; index++) {
+    const isBlockEmpty = checkIsBlockEmpty(array, priorityList[index])
+    if (isBlockEmpty) {
+      return priorityList[index];
+    }
   }
 
-  return defenseMove; 
-  // const strategy = ["11", ""]
-  // const pWC = positions[randomIndex];
-  // const randomChoiceCoordinate = getCoordinate(randomPosition);
+  return -1
+}
 
-  // if (isBlockEmpty(array, randomChoiceCoordinate)) {
-  //   removeChosenPosition(positions, randomIndex);
-  //   return randomChoiceCoordinate;
-  // }
-
-  // removeChosenPosition(positions, randomIndex);
-  // return getRandomPosition(positions, array);
+function commonCorner() {
 
 }
 
-function startGame(array, p1Name, p2Name) {
-  const positions = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+function findValidMiddleBlocks(middleBlocks, ) {
+
+}
+
+function choseRandomElement(board, middleBlocks) {
+  const randomIndex = Math.floor(middleBlocks.length * Math.random()); 
+  console.log(randomIndex); 
+  console.log(middleBlocks[randomIndex]); 
+  if (checkIsBlockEmpty(board, middleBlocks[randomIndex])) {
+    return middleBlocks[randomIndex]; 
+  } 
+}
+
+function predictOpponentMove(board, char, opponentPositions) {
+  const sideWinCombinations = [
+    ["00", "01", "02"],
+    ["00", "10", "20"],
+    ["20", "21", "22"],
+    ["02", "12", "22"],
+  ]
+  const corners = ["00", "02", "20", "22"]; 
+  const middleBlocks = ["01", "10", "21", "12"]; 
+
+  let cornerCount = 0; 
+  for (let oIndex = 0; oIndex < opponentPositions.length; oIndex++) {
+    for (let cIndex = 0; cIndex < corners.length; cIndex++) {
+      if (opponentPositions[oIndex] === corners[cIndex]) {
+        cornerCount +=1; 
+      }
+    }
+  }
+
+
+  if (cornerCount >= 2) {
+    return choseRandomElement(board, middleBlocks);  
+  }
+
+  return commonCorner(); 
+  
+}
+
+function defenseBotCoordinate(board, char, opponentPositions) {
+  const botNextWinningCoordinate = playerNextWinningcoordinate(board, " 🟢 ");
+  console.log("---> botNextWinningCoordinate move : ", botNextWinningCoordinate);
+
+  if (botNextWinningCoordinate !== -1) {
+    return botNextWinningCoordinate;
+  }
+
+  const opponentNextWinningCoordinate = playerNextWinningcoordinate(board, char);
+  console.log("---> opponentNextWinningCoordinate : ", opponentNextWinningCoordinate);
+
+  if (opponentNextWinningCoordinate !== -1) {
+    return opponentNextWinningCoordinate;
+  }
+
+  const opponentNextMove = predictOpponentMove(board, char, opponentPositions);
+  if(opponentNextMove !== -1 && opponentPositions.length === 2) {
+    return opponentNextMove; 
+  }
+
+  const priorityCoordinate = getBestStrategicPostion(board);
+  console.log("---> priorityCoordinate move : ", priorityCoordinate);
+
+  if (priorityCoordinate !== -1) {
+    return priorityCoordinate;
+  }
+
+  const randomCoordinate = getRandomPosition(board);
+  return randomCoordinate;
+}
+
+function startGame(board, p1Name, p2Name = "SUPER DUPER BOT") {
+  const opponentPositions = [];
   let turns = 8;
   let currentTurn = 1;
-  display(array);
+  display(board);
 
-  let p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
-  updateArray(p1ChosenCoordinate, array, " ❌ ");
-  display(array);
+  let p1ChosenCoordinate = getChosenBlockPosition(p1Name, board);
+  opponentPositions.push(p1ChosenCoordinate);
+  updateArray(p1ChosenCoordinate, board, " ❌ ");
+  display(board);
 
   while (currentTurn <= turns) {
-    const p2ChosenCoordinate = defenseBotCoordinate(positions, array);
+    const p2ChosenCoordinate = defenseBotCoordinate(board, " ❌ ", opponentPositions);
     console.log("bot chosen coordinate", p2ChosenCoordinate);
-    updateArray(p2ChosenCoordinate, array, " 🟢 ");
-    display(array);
+    updateArray(p2ChosenCoordinate, board, " 🟢 ");
+    display(board);
 
-    if (isPlayerWinner(array, " 🟢 ")) {
+    if (isPlayerWinner(board, " 🟢 ")) {
       console.log(`${p2Name} won the game 🎉🎉 \n`);
       return;
     }
 
-    p1ChosenCoordinate = getChosenBlockPosition(p1Name, array);
-    updateArray(p1ChosenCoordinate, array, " ❌ ");
-    display(array);
+    p1ChosenCoordinate = getChosenBlockPosition(p1Name, board);
+    opponentPositions.push(p1ChosenCoordinate);
+    updateArray(p1ChosenCoordinate, board, " ❌ ");
+    display(board);
 
-    if (isPlayerWinner(array, " ❌ ")) {
+    if (isPlayerWinner(board, " ❌ ")) {
       console.log(`${p1Name} won the game 🎉🎉 \n`);
       return
     }
@@ -224,34 +291,36 @@ function startGame(array, p1Name, p2Name) {
 }
 
 function config() {
-  const array = [
+  const board = [
     [" 1  ", " 2  ", " 3 "],
     [" 4  ", " 5  ", " 6 "],
     [" 7  ", " 8  ", " 9 "],
   ];
   const p1Name = prompt("Enter your name (p1) : ");
-  const p2Name = prompt("Enter your name (p2) : ")
+  // const p2Name = prompt("Enter your name (p2) : ")
 
   console.log(`${p1Name} marker : " ❌ "`);
-  console.log(`${p2Name} marker : " 🟢 "`);
+  console.log(`$ SUPER DUPER BOT marker : " 🟢 "`);
 
-  startGame(array, p1Name, p2Name);
+  startGame(board, p1Name);
 
   const wannaPlayAgain = confirm("Do you wanna play again ? ");
   if (wannaPlayAgain) {
     config();
   }
-  console.log("Thanks for playing :)");
 }
 
 function main() {
   const array = [
-    [" ❌ ", " 2  ", " 3 "],
-    [" 4  ", " ❌ ", " 6 "],
+    [" ❌ ", " ❌ ", " 3 "],
+    [" 4  ", " 5  ", " 6 "],
     [" 7  ", " 8  ", " 9 "],
   ];
-  // console.log(playerNextWinningMove(array));
+  // const coordinates = playerNextWinningcoordinate(array, " ❌ ");
+  // updateArray(coordinates, array, " ❌ "); 
+  // display(array); 
   config();
+  console.log("Thanks for playing :)");
 }
 
 main(); 
