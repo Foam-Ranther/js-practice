@@ -177,8 +177,8 @@ function removeOppositeMidBlock(midBlocks, opponentPositions) {
         oppositeMidBlocks.pop();
       }
     }
-  return oppositeMidBlocks; 
-}
+    return oppositeMidBlocks;
+  }
 }
 function choseRandomElement(board, midBlocks) {
   const randomIndex = Math.floor(midBlocks.length * Math.random());
@@ -189,19 +189,21 @@ function choseRandomElement(board, midBlocks) {
 }
 
 function findCommonCorner(potentialCorners) {
-  console.log(potentialCorners); 
+  console.log(potentialCorners);
   for (let index = 0; index < potentialCorners[0].length; index++) {
     const corner = potentialCorners[0][index];
     if (corner === potentialCorners[1][0] || corner === potentialCorners[1][1]) {
       return corner
     }
   }
+
+  return -1; 
 }
 
 function commonCorner(opponentPositions, middleBlocks, presentCorners) {
   console.log("presentCorners", presentCorners);
   const respectiveCorners = [["00", "02"], ["00", "20"], ["20", "22"], ["02", "22"]];
-  const potentialCorners = presentCorners ;
+  const potentialCorners = presentCorners;
 
   for (let opponentIndex = 0; opponentIndex < opponentPositions.length; opponentIndex++) {
 
@@ -221,27 +223,27 @@ function commonCorner(opponentPositions, middleBlocks, presentCorners) {
 
 function bestStrategicPosition(board, opponentPositions, turn) {
   if (turn === 1) {
-    console.log("inside turn === 1"); 
-    return checkIsBlockEmpty(board, "11") ? "11" : "00"; 
+    console.log("inside turn === 1");
+    return checkIsBlockEmpty(board, "11") ? "11" : "00";
   }
 
   const corners = ["00", "02", "20", "22"];
   const midBlocks = ["01", "10", "21", "12"];
-  const presentCorners = []; 
+  const presentCorners = [];
 
   let cornerCount = 0;
   for (let oIndex = 0; oIndex < opponentPositions.length; oIndex++) {
     for (let cIndex = 0; cIndex < corners.length; cIndex++) {
       if (opponentPositions[oIndex] === corners[cIndex]) {
         cornerCount += 1;
-        presentCorners.push(corners[cIndex]); 
+        presentCorners.push(corners[cIndex]);
       }
     }
   }
 
 
   if (cornerCount >= 1) {
-    const leftMidBlocks = removeOppositeMidBlock(midBlocks, opponentPositions); 
+    const leftMidBlocks = removeOppositeMidBlock(midBlocks, opponentPositions);
     return choseRandomElement(board, leftMidBlocks);
   }
 
@@ -277,6 +279,23 @@ function defenseBotCoordinate(board, char, opponentPositions, turn) {
     return strategicMove;
   }
 
+  return getRandomPosition(board); 
+}
+
+function attackBotCoordinate(board, char, opponentPositions, turn) {
+  const botNextWinningCoordinate = playerNextWinningcoordinate(board, char);
+  console.log("---> botNextWinningCoordinate move : ", botNextWinningCoordinate);
+
+  if (botNextWinningCoordinate !== -1) {
+    return botNextWinningCoordinate;
+  }
+
+  const opponentNextWinningCoordinate = playerNextWinningcoordinate(board, " ❌ ");
+  console.log("---> opponentNextWinningCoordinate : ", opponentNextWinningCoordinate);
+
+  if (opponentNextWinningCoordinate !== -1) {
+    return opponentNextWinningCoordinate;
+  }
 }
 
 function startGame(board, p1Name, p2Name = "SUPER DUPER BOT") {
@@ -291,7 +310,7 @@ function startGame(board, p1Name, p2Name = "SUPER DUPER BOT") {
   display(board);
 
   while (currentTurn <= turns) {
-    const p2ChosenCoordinate = defenseBotCoordinate(board, " ❌ ", opponentPositions, currentTurn);
+    const p2ChosenCoordinate = defenseBotCoordinate(board, " 🟢 ", opponentPositions, currentTurn);
     console.log("bot chosen coordinate", p2ChosenCoordinate);
     updateArray(p2ChosenCoordinate, board, " 🟢 ");
     display(board);
@@ -337,14 +356,6 @@ function config() {
 }
 
 function main() {
-  const array = [
-    [" ❌ ", " ❌ ", " 3 "],
-    [" 4  ", " 5  ", " 6 "],
-    [" 7  ", " 8  ", " 9 "],
-  ];
-  // const coordinates = playerNextWinningcoordinate(array, " ❌ ");
-  // updateArray(coordinates, array, " ❌ "); 
-  // display(array); 
   config();
   console.log("Thanks for playing :)");
 }
