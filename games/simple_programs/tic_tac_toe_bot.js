@@ -164,20 +164,27 @@ function playerNextWinningcoordinate(array, char) {
   return -1;
 }
 
-function getBestStrategicPostion(array) {
-  const priorityList = ["11"];
-  for (let index = 0; index < priorityList.length; index++) {
+function removeOppositeMidBlock(midBlocks, opponentPositions) {
+  const oppositeMidBlocks = ["21", "12", "01", "10"];
+  for (let opponentIndex = 0; opponentIndex < opponentPositions.length; opponentIndex++) {
 
-  }
+    for (let midBlockIndex = 0; midBlockIndex < midBlocks.length; midBlockIndex++) {
+      const currentMidBlock = midBlocks[midBlockIndex];
 
-  return -1
+      if (opponentPositions[opponentIndex] === currentMidBlock) {
+        const oppositeMidBlockIndex = midBlocks.indexOf(currentMidBlock);
+        oppositeMidBlocks[oppositeMidBlockIndex] = oppositeMidBlocks[oppositeMidBlocks.lenght]
+        oppositeMidBlocks.pop();
+      }
+    }
+  return oppositeMidBlocks; 
 }
+}
+function choseRandomElement(board, midBlocks) {
+  const randomIndex = Math.floor(midBlocks.length * Math.random());
 
-function choseRandomElement(board, middleBlocks) {
-  const randomIndex = Math.floor(middleBlocks.length * Math.random());
-
-  if (checkIsBlockEmpty(board, middleBlocks[randomIndex])) {
-    return middleBlocks[randomIndex];
+  if (checkIsBlockEmpty(board, midBlocks[randomIndex])) {
+    return midBlocks[randomIndex];
   }
 }
 
@@ -191,29 +198,9 @@ function findCommonCorner(potentialCorners) {
   }
 }
 
-// function chooseOppositeCorner(presentCorners) {
-// const sideWinCombinations = [
-//   ["00", "01", "02"],
-//   ["00", "10", "20"],
-//   ["02", "12", "22"],
-//   ["02", "11", "20"],
-// ]
-
-// for (let index = 0; index < sideWinCombinations.length; index++) {
-//     const row = sideWinCombinations[index]; 
-//     for (let cIndex = 0; cIndex < row.length; cIndex++) {
-//       if (presentCorners === row[cIndex])
-//     }
-//     if (corner === potentialCorners[1][0] || corner === potentialCorners[1][1]) {
-//       return corner
-//     }
-//   }
-// }
-
 function commonCorner(opponentPositions, middleBlocks, presentCorners) {
   console.log("presentCorners", presentCorners);
   const respectiveCorners = [["00", "02"], ["00", "20"], ["20", "22"], ["02", "22"]];
-  // const cornersCounterPart = [["00", "02"], ["00", "20"], ["20", "22"], ["02", "22"]]
   const potentialCorners = presentCorners ;
 
   for (let opponentIndex = 0; opponentIndex < opponentPositions.length; opponentIndex++) {
@@ -232,14 +219,14 @@ function commonCorner(opponentPositions, middleBlocks, presentCorners) {
 
 }
 
-function bestStrategicPosition(board, opponentPositions) {
-  const isCenterBlockEmpty = checkIsBlockEmpty(board, "11");
-  if (isCenterBlockEmpty) {
-    return "11";
+function bestStrategicPosition(board, opponentPositions, turn) {
+  if (turn === 1) {
+    console.log("inside turn === 1"); 
+    return checkIsBlockEmpty(board, "11") ? "11" : "00"; 
   }
 
   const corners = ["00", "02", "20", "22"];
-  const middleBlocks = ["01", "10", "21", "12"];
+  const midBlocks = ["01", "10", "21", "12"];
   const presentCorners = []; 
 
   let cornerCount = 0;
@@ -253,11 +240,12 @@ function bestStrategicPosition(board, opponentPositions) {
   }
 
 
-  if (cornerCount >= 2) {
-    return choseRandomElement(board, middleBlocks);
+  if (cornerCount >= 1) {
+    const leftMidBlocks = removeOppositeMidBlock(midBlocks, opponentPositions); 
+    return choseRandomElement(board, leftMidBlocks);
   }
 
-  return commonCorner(opponentPositions, middleBlocks, presentCorners);
+  return commonCorner(opponentPositions, midBlocks, presentCorners);
 
 }
 
@@ -276,12 +264,13 @@ function defenseBotCoordinate(board, char, opponentPositions, turn) {
     return opponentNextWinningCoordinate;
   }
 
+
   if (turn > 4) {
     const randomCoordinate = getRandomPosition(board);
     return randomCoordinate;
   }
 
-  const strategicMove = bestStrategicPosition(board, opponentPositions);
+  const strategicMove = bestStrategicPosition(board, opponentPositions, turn);
   console.log("---> counter move : ", strategicMove);
 
   if (strategicMove !== -1) {
@@ -335,12 +324,11 @@ function config() {
     [" 7  ", " 8  ", " 9 "],
   ];
   const p1Name = prompt("Enter your name (p1) : ");
-  // const p2Name = prompt("Enter your name (p2) : ")
 
   console.log(`${p1Name} marker : " ❌ "`);
-  console.log(`$ SUPER DUPER BOT marker : " 🟢 "`);
+  console.log(`$ THE INVENCIBLE BOT marker : " 🟢 "`);
 
-  startGame(board, p1Name);
+  startGame(board, p1Name, "THE INVENCIBLE BOT");
 
   const wannaPlayAgain = confirm("Do you wanna play again ? ");
   if (wannaPlayAgain) {
