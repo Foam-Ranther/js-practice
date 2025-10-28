@@ -2,11 +2,17 @@ function encodeInterger(data) {
   return `i${data}e`; 
 }
 
+function encodeString(data) {
+  return `${data.length}:${data}`; 
+}
+
 function encode(data) {
   const typeOfData = typeof data; 
   switch (typeOfData) {
     case "number":
       return encodeInterger(data); 
+    case "string": 
+      return encodeString(data); 
     default:
       return "yes"; 
   }
@@ -45,6 +51,9 @@ function testAllEncode() {
   testEncode(-42, "i-42e", "testing for negative num");
   testEncode(0, "i0e", "testing for number 0");
   testEncode(123, "i123e", "testing for number 123");
+  testEncode("hello", "5:hello", "testing for string");
+  testEncode("hey you", "7:hey you", "testing for string with 2 words");
+  testEncode("#$%Hell", "7:#$%Hell", "testing for string with special chars");
 }
 
 function testAll() {
