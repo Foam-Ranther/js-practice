@@ -1,5 +1,15 @@
+function encodeInterger(data) {
+  return `i${data}e`; 
+}
+
 function encode(data) {
-  return "appl";
+  const typeOfData = typeof data; 
+  switch (typeOfData) {
+    case "number":
+      return encodeInterger(data); 
+    default:
+      return "yes"; 
+  }
 }
 
 function displayMessage(data, actual, expected, description) {
@@ -29,9 +39,18 @@ function displayTestDescription(description) {
   underline(description);
 }
 
+function testAllEncode() {
+  displayTestDescription("testing Encode function "); 
+  testEncode(123, "i123e", "testing for natural number");
+  testEncode(-42, "i-42e", "testing for negative num");
+  testEncode(0, "i0e", "testing for number 0");
+  testEncode(123, "i123e", "testing for number 123");
+}
+
 function testAll() {
-  displayTestDescription("Alternating vowels and consonants :"); 
-  testEncode("apple", "apple", "simple test case");
+  console.log("\n"); 
+  console.log("testing cases for bencode chipher : "); 
+  testAllEncode(); 
 }
 
 function main() {
