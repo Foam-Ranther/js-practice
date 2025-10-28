@@ -6,13 +6,28 @@ function encodeString(data) {
   return `${data.length}:${data}`; 
 }
 
+function encodeArray(data) {
+  const encodeElements = [];
+
+  for (let index = 0; index < data.length; index++) {
+    const encodedString = encode(data[index]); 
+    encodeElements.push(encodedString); 
+  }
+
+  const combinedString = encodeElements.join(""); 
+  return `l${combinedString}e`; 
+}
+
 function encode(data) {
   const typeOfData = typeof data; 
+
   switch (typeOfData) {
     case "number":
       return encodeInterger(data); 
     case "string": 
       return encodeString(data); 
+    case "object": 
+      return encodeArray(data); 
     default:
       return "yes"; 
   }
@@ -54,6 +69,17 @@ function testAllEncode() {
   testEncode("hello", "5:hello", "testing for string");
   testEncode("hey you", "7:hey you", "testing for string with 2 words");
   testEncode("#$%Hell", "7:#$%Hell", "testing for string with special chars");
+   testEncode(["apple", 123, "banana"], 
+    "l5:applei123e6:bananae", 
+    "testing array");
+  testEncode(["apple", 123, ["banana", -5]], 
+    "l5:applei123el6:bananai-5eee", 
+    "testing nested array");
+  testEncode([], "le", "testing for empty array");
+  testEncode(["one", ["two", ["three"]]],
+    "l3:onel3:twol5:threeeee",
+    "testing for double nested array");
+   
 }
 
 function testAll() {
