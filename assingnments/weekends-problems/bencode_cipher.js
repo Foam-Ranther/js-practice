@@ -1,22 +1,22 @@
-function alternativeChar(string) {
-  return "apple";
+function encode(data) {
+  return "appl";
 }
 
-function displayMessage(string, actual, expected, description) {
+function displayMessage(data, actual, expected, description) {
   if (actual === expected) {
     console.log(` ✅ ${description}`);
     return;
   }
 
   console.log(` ❌ ${description}`);
-  console.log("Input Value    : ", string);
+  console.log("Input Value    : ", data);
   console.log("Actual Value   : ", actual);
   console.log("Expected Value : ", expected);
 }
 
-function testAlternativeChars(string, expected, description) {
-  const actual = alternativeChar(string);
-  displayMessage(string, actual, expected, description);
+function testEncode(data, expected, description) {
+  const actual = encode(data);
+  displayMessage(data, actual, expected, description);
 }
 
 function underline(string) {
@@ -27,18 +27,16 @@ function underline(string) {
 function displayTestDescription(description) {
   console.log('\n'); 
   underline(description);
-  // console.log("\n");  
 }
 
 function testAll() {
   displayTestDescription("Alternating vowels and consonants :"); 
-  testAlternativeChars("apple", "apple", "simple test case");
+  testEncode("apple", "apple", "simple test case");
 }
 
 function main() {
   testAll();
-  testAll();
-  testAll();
+  console.log("\n"); 
 }
 
 main();
