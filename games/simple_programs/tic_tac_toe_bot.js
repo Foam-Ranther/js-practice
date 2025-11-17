@@ -252,14 +252,14 @@ function bestStrategicPosition(board, opponentPositions, turn) {
 }
 
 function defenseBotCoordinate(board, char, opponentPositions, turn) {
-  const botNextWinningCoordinate = playerNextWinningcoordinate(board, " 🟢 ");
+  const botNextWinningCoordinate = playerNextWinningcoordinate(board, char);
   console.log("---> botNextWinningCoordinate move : ", botNextWinningCoordinate);
 
   if (botNextWinningCoordinate !== -1) {
     return botNextWinningCoordinate;
   }
 
-  const opponentNextWinningCoordinate = playerNextWinningcoordinate(board, char);
+  const opponentNextWinningCoordinate = playerNextWinningcoordinate(board, " ❌ ");
   console.log("---> opponentNextWinningCoordinate : ", opponentNextWinningCoordinate);
 
   if (opponentNextWinningCoordinate !== -1) {
@@ -282,7 +282,7 @@ function defenseBotCoordinate(board, char, opponentPositions, turn) {
   return getRandomPosition(board); 
 }
 
-function attackBotCoordinate(board, char, opponentPositions, turn) {
+function attackBotCoordinate(board, char) {
   const botNextWinningCoordinate = playerNextWinningcoordinate(board, char);
   console.log("---> botNextWinningCoordinate move : ", botNextWinningCoordinate);
 
@@ -290,12 +290,14 @@ function attackBotCoordinate(board, char, opponentPositions, turn) {
     return botNextWinningCoordinate;
   }
 
-  const opponentNextWinningCoordinate = playerNextWinningcoordinate(board, " ❌ ");
+  const opponentNextWinningCoordinate = playerNextWinningcoordinate(board, " 🟢 ");
   console.log("---> opponentNextWinningCoordinate : ", opponentNextWinningCoordinate);
 
   if (opponentNextWinningCoordinate !== -1) {
     return opponentNextWinningCoordinate;
   }
+
+  return getRandomPosition(board); 
 }
 
 function startGame(board, p1Name, p2Name = "SUPER DUPER BOT") {
